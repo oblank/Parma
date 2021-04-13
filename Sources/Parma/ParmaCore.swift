@@ -33,6 +33,8 @@ class ParmaCore: NSObject {
     private let imageElementComposer = ImageElementComposer()
     private let listElementComposer = ListElementComposer()
     private let listItemElementComposer = ListItemElementComposer()
+    private let codeBlockElementComposer = CodeBlockElementComposer()
+    private let blockQuoteElementComposer = BlockQuoteElementComposer()
     private let unknownElementComposer = UnknownElementComposer()
     
     private let parser: XMLParser
@@ -66,6 +68,7 @@ class ParmaCore: NSObject {
     convenience init(_ markdown: String) throws {
         let down = Down(markdownString: markdown)
         let xml = try down.toXML()
+        print(xml.utf8)
         self.init(xmlData: Data(xml.utf8))
     }
     
@@ -92,6 +95,8 @@ class ParmaCore: NSObject {
             .image : imageElementComposer,
             .list : listElementComposer,
             .item : listItemElementComposer,
+            .codeBlock : codeBlockElementComposer,
+            .blockQuote : blockQuoteElementComposer,
             .unknown : unknownElementComposer
         ]
     }
@@ -104,6 +109,7 @@ class ParmaCore: NSObject {
 
 // MARK: - XML parsing logic
 extension ParmaCore: XMLParserDelegate {
+    // 解析xml遇到开始标签时调用
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
         // Start new element
         let element = Element.element(elementName)
@@ -121,6 +127,7 @@ extension ParmaCore: XMLParserDelegate {
         }
     }
     
+    // 遇到结束标签时调用
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         let element = Element.element(elementName)
         
@@ -138,6 +145,7 @@ extension ParmaCore: XMLParserDelegate {
 
             inlineComposers[element]?.willStop(in: context)
         } else {
+            
             if let text = blockComposers[element]?.text(in: context, render: render) {
                 context.views.append(AnyView(text))
             } else {
@@ -168,6 +176,7 @@ extension ParmaCore: XMLParserDelegate {
         }
     }
     
+    // 遇到字符串时调用
     func parser(_ parser: XMLParser, foundCharacters string: String) {
         guard string.trimmingCharacters(in: .whitespacesAndNewlines) != "" else { return }
         context.foundCharacters += string.trimmingCharacters(in: .newlines)

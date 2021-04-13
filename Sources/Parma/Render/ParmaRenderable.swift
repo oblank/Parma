@@ -43,6 +43,14 @@ public protocol ParmaRenderable {
     /// Define the code text style.
     /// - Parameter text: The text string captured from code.
     func code(_ text: String) -> Text
+
+    /// Define the codes text style.
+    /// - Parameter text: The text string captured from code.
+    func codes(_ text: String) -> Text
+
+    /// Define the quote text style.
+    /// - Parameter text: The text string captured from code.
+    func quote(_ text: String) -> Text
     
     /// Define the style of heading view.
     /// - Parameters:
@@ -53,6 +61,14 @@ public protocol ParmaRenderable {
     /// Define the style of paragraph view.
     /// - Parameter view: The view contains view(s) which belong(s) to this paragraph.
     func paragraphBlock(view: AnyView) -> AnyView
+
+    /// Define the style of paragraph view.
+    /// - Parameter view: The view contains view(s) which belong(s) to this paragraph.
+    func codeBlock(view: AnyView) -> AnyView
+
+    /// Define the style of paragraph view.
+    /// - Parameter view: The view contains view(s) which belong(s) to this paragraph.
+    func blockQuote(view: AnyView) -> AnyView
     
     /// Define the style of list item.
     /// - Parameter view: The view contains view(s) which belong(s) to this item.
@@ -85,6 +101,14 @@ extension ParmaRenderable {
     public func code(_ text: String) -> Text {
         Text(text).font(.system(.body, design: .monospaced))
     }
+
+    public func codes(_ text: String) -> Text {
+        Text(text).font(.system(.body, design: .monospaced))
+    }
+
+    public func quote(_ text: String) -> Text {
+        Text(text).font(.system(.body, design: .monospaced))
+    }
     
     public func heading(level: HeadingLevel?, textView: Text) -> Text {
         switch level {
@@ -106,6 +130,14 @@ extension ParmaRenderable {
     }
     
     public func paragraphBlock(view: AnyView) -> AnyView {
+        AnyView(view.fixedSize(horizontal: false, vertical: true).padding(.bottom, 8))
+    }
+
+    public func codeBlock(view: AnyView) -> AnyView {
+        AnyView(view.fixedSize(horizontal: false, vertical: true).padding(.bottom, 8))
+    }
+
+    public func blockQuote(view: AnyView) -> AnyView {
         AnyView(view.fixedSize(horizontal: false, vertical: true).padding(.bottom, 8))
     }
     
